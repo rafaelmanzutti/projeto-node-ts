@@ -1,4 +1,4 @@
 import 'dotenv/config';
-import { main } from './main.js';
+import { app } from './infra/http/server.js';
 
-main.server.listen(3000);
+app.server.listen(3000);

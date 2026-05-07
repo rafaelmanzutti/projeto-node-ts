@@ -1,7 +1,7 @@
 import express from 'express';
-import { routes } from './router.js';
+import { routes } from './routes.js';
 
-class Main {
+class Server {
   private _server;
 
   constructor() {
@@ -17,9 +17,10 @@ class Main {
   private _router() {
     this._server.use(...routes);
   }
+
   get server() {
     return this._server;
   }
 }
 
-export const main = new Main();
+export const app = new Server();
