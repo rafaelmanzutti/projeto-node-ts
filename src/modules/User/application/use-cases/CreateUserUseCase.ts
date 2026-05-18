@@ -1,10 +1,31 @@
-import { ICreateUserDTO, IUserRepository } from '../../domain/IUserRepository.js';
+import { randomUUID } from 'crypto';
+import { hash } from 'bcrypt';
+import { ICreateUserDTO } from '../dtos/ICreateUserDTO.js';
+import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
+import { UtilsFileUser } from '../../utils/utils-file.js';
 
 export class CreateUserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
   async execute(data: ICreateUserDTO): Promise<IUser> {
-    return this.userRepository.create(data);
+    const existingUser = await this.userRepository.findByEmail(data.email);
+    if (existingUser) {
+      throw new Error('E-mail já cadastrado.');
+    }
+
+    const hashedPassword = await hash(data.password, 10);
+    const now = new Date();
+    const user: IUser = {
+      id: randomUUID(),
+      name: data.name ?? null,
+      email: data.email,
+      password: hashedPassword,
+      createdAt: now,
+      updatedAt: now,
+    };
+    const created = await this.userRepository.create(user);
+    UtilsFileUser.createFolderUser(created.id);
+    return created;
   }
 }

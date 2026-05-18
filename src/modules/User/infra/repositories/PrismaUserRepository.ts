@@ -1,9 +1,28 @@
 import { prisma } from '../../../../shared/infra/database/prisma.js';
-import { ICreateUserDTO, IUserRepository } from '../../domain/IUserRepository.js';
+import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
 
 export class PrismaUserRepository implements IUserRepository {
-  async create(data: ICreateUserDTO): Promise<IUser> {
-    return prisma.user.create({ data });
+  async create(user: IUser): Promise<IUser> {
+    const created = await prisma.user.create({
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        createdAt: user.createdAt,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+    return created as unknown as IUser;
+  }
+
+  async findByEmail(email: string): Promise<IUser | null> {
+    const user = await prisma.user.findUnique({ where: { email } });
+    return user as unknown as IUser | null;
   }
 }
