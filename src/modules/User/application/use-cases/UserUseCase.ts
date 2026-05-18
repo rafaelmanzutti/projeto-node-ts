@@ -5,10 +5,10 @@ import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
 import { UtilsFileUser } from '../../utils/utils-file.js';
 
-export class CreateUserUseCase {
+export class UserUseCase {
   constructor(private userRepository: IUserRepository) {}
 
-  async execute(data: ICreateUserDTO): Promise<IUser> {
+  public async create(data: ICreateUserDTO): Promise<IUser> {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
       throw new Error('E-mail já cadastrado.');
@@ -27,5 +27,9 @@ export class CreateUserUseCase {
     const created = await this.userRepository.create(user);
     UtilsFileUser.createFolderUser(created.id);
     return created;
+  }
+
+  public async read(paramsId: string): Promise<IUser | null> {
+    return this.userRepository.findById(paramsId);
   }
 }
