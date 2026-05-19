@@ -13,6 +13,11 @@ const ZUserSchema = z.object({
 
 const ZIdSchema = z.string().min(30, { message: 'ID é obrigatório' });
 
+const ZIdNameSchema = z.object({
+  paramsId: z.string().min(30, { message: 'ID é obrigatório' }),
+  name: z.string().min(1, { message: 'Nome é obrigatório' }),
+});
+
 class UserController {
   public async create(req: Request, res: Response): Promise<Response> {
     const { name, email, password } = req.body;
@@ -61,6 +66,32 @@ class UserController {
     return res.json({
       message: 'Usuário encontrado.',
       data: user,
+    });
+  }
+
+  public async update(req: Request, res: Response): Promise<Response> {
+    const { name } = req.body;
+    const paramsId = req.params.id as string;
+
+    const validationId = ZIdNameSchema.safeParse({ paramsId, name });
+    if (!validationId.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validationId.error.issues,
+      });
+    }
+
+    const userRepository = new PrismaUserRepository();
+    const userService = new UserService(userRepository);
+
+    const result = await userService.update(paramsId, name);
+    if (!result.ok) {
+      return res.status(404).json({ message: result.error.message });
+    }
+
+    return res.json({
+      message: 'Atualizado com sucesso!',
+      data: result.value,
     });
   }
 }

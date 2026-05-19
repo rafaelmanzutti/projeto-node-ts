@@ -21,6 +21,23 @@ export class PrismaUserRepository implements IUserRepository {
     return created as unknown as IUser;
   }
 
+  async update(paramsId: string, name: string): Promise<IUser> {
+    const updated = await prisma.user.update({
+      where: {
+        id: paramsId,
+      },
+      data: {
+        name,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+    return updated as unknown as IUser;
+  }
+
   async findByEmail(email: string): Promise<IUser | null> {
     const user = await prisma.user.findUnique({
       where: { email },

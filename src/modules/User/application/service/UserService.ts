@@ -33,4 +33,13 @@ export class UserService {
   public async read(paramsId: string): Promise<IUser | null> {
     return this.userRepository.findById(paramsId);
   }
+
+  public async update(paramsId: string, name: string): Promise<Result<IUser>> {
+    const existingUser = await this.userRepository.findById(paramsId);
+    if (!existingUser) {
+      return err(new Error('Dados não encontrados.'));
+    }
+    const updated = await this.userRepository.update(paramsId, name);
+    return ok(updated);
+  }
 }
