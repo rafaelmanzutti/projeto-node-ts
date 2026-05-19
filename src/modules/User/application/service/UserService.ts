@@ -4,14 +4,15 @@ import { ICreateUserDTO } from '../dtos/ICreateUserDTO.js';
 import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
 import { UtilsFileUser } from '../../utils/utils-file.js';
+import { Result, ok, err } from '../../../../shared/types/Result.js';
 
-export class UserUseCase {
+export class UserService {
   constructor(private userRepository: IUserRepository) {}
 
-  public async create(data: ICreateUserDTO): Promise<IUser> {
+  public async create(data: ICreateUserDTO): Promise<Result<IUser>> {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
-      throw new Error('E-mail já cadastrado.');
+      return err(new Error('E-mail já cadastrado.'));
     }
 
     const hashedPassword = await hash(data.password, 10);
@@ -26,7 +27,7 @@ export class UserUseCase {
     };
     const created = await this.userRepository.create(user);
     UtilsFileUser.createFolderUser(created.id);
-    return created;
+    return ok(created);
   }
 
   public async read(paramsId: string): Promise<IUser | null> {
