@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { UserService } from '../../application/service/UserService.js';
 import { PrismaUserRepository } from '../repositories/PrismaUserRepository.js';
+//import pino from 'pino';
 
 const ZUserSchema = z.object({
   name: z.string().optional(),
@@ -92,6 +93,33 @@ class UserController {
     return res.json({
       message: 'Atualizado com sucesso!',
       data: result.value,
+    });
+  }
+
+  public async delete(req: Request, res: Response): Promise<Response> {
+    const paramsId = req.params.id as string;
+
+    const validation = ZIdSchema.safeParse(paramsId);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validation.error.issues,
+      });
+    }
+
+    const userRepository = new PrismaUserRepository();
+    const userService = new UserService(userRepository);
+
+    const result = await userService.delete(paramsId);
+    if (!result.ok) {
+      const isInternal = result.error.message.startsWith('INTERNAL:');
+      return res
+        .status(isInternal ? 500 : 404)
+        .json({ message: isInternal ? 'Erro interno. Contate o suporte.' : result.error.message });
+    }
+
+    return res.json({
+      message: 'Usuário deletado com sucesso!',
     });
   }
 }

@@ -10,4 +10,6 @@ router.get(`${baseUrl}/:id`, (req, res) => userController.read(req, res));
 
 router.patch(`${baseUrl}/:id`, (req, res) => userController.update(req, res));
 
+router.delete(`${baseUrl}/:id`, (req, res) => userController.delete(req, res));
+
 export const userRouter = router;
