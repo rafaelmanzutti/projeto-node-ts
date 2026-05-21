@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import pino from 'pino';
+
 import { UserService } from '../../application/service/UserService.js';
 import { PrismaUserRepository } from '../repositories/PrismaUserRepository.js';
-//import pino from 'pino';
+import { AppError } from '../../../../shared/types/AppError.js';
+
+const logger = pino();
 
 const ZUserSchema = z.object({
   name: z.string().optional(),
@@ -36,7 +40,14 @@ class UserController {
 
     const result = await userService.create({ name, email, password });
     if (!result.ok) {
-      return res.status(409).json({ message: result.error.message });
+      const { statusCode } = result.error as AppError;
+
+      if (statusCode >= 500) {
+        logger.error(result.error.message);
+      }
+
+      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+      return res.status(statusCode).json({ message });
     }
 
     return res.json({
@@ -87,7 +98,14 @@ class UserController {
 
     const result = await userService.update(paramsId, name);
     if (!result.ok) {
-      return res.status(404).json({ message: result.error.message });
+      const { statusCode } = result.error as AppError;
+
+      if (statusCode >= 500) {
+        logger.error(result.error.message);
+      }
+
+      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+      return res.status(statusCode).json({ message });
     }
 
     return res.json({
@@ -112,10 +130,15 @@ class UserController {
 
     const result = await userService.delete(paramsId);
     if (!result.ok) {
-      const isInternal = result.error.message.startsWith('INTERNAL:');
-      return res
-        .status(isInternal ? 500 : 404)
-        .json({ message: isInternal ? 'Erro interno. Contate o suporte.' : result.error.message });
+      const { statusCode } = result.error as AppError;
+
+      if (statusCode >= 500) {
+        logger.error({ userId: paramsId }, result.error.message); // só aparece no terminal do servidor
+      }
+
+      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+
+      return res.status(statusCode).json({ message });
     }
 
     return res.json({

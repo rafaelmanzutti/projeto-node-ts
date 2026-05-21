@@ -5,6 +5,7 @@ import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
 import { UtilsFileUser } from '../../utils/utils-file.js';
 import { Result, ok, err } from '../../../../shared/types/Result.js';
+import { AppError } from '../../../../shared/types/AppError.js';
 
 export class UserService {
   constructor(private userRepository: IUserRepository) {}
@@ -12,7 +13,7 @@ export class UserService {
   public async create(data: ICreateUserDTO): Promise<Result<IUser>> {
     const existingUser = await this.userRepository.findByEmail(data.email);
     if (existingUser) {
-      return err(new Error('E-mail já cadastrado.'));
+      return err(new AppError('E-mail já cadastrado.', 409));
     }
 
     const hashedPassword = await hash(data.password, 10);
@@ -30,7 +31,7 @@ export class UserService {
       UtilsFileUser.createFolderUser(created.id);
       return ok(created);
     } catch {
-      return err(new Error('Erro ao tentar criar usuário.'));
+      return err(new AppError('Erro ao tentar criar usuário.', 500));
     }
   }
 
@@ -41,31 +42,31 @@ export class UserService {
   public async update(paramsId: string, name: string): Promise<Result<IUser>> {
     const existingUser = await this.userRepository.findById(paramsId);
     if (!existingUser) {
-      return err(new Error('Dados não encontrados.'));
+      return err(new AppError('Dados não encontrados.', 404));
     }
     try {
       const updated = await this.userRepository.update(paramsId, name);
       return ok(updated);
     } catch {
-      return err(new Error('Erro ao tentar atualizar usuário.'));
+      return err(new AppError('Erro ao tentar atualizar usuário.', 500));
     }
   }
 
   public async delete(paramsId: string): Promise<Result<void>> {
     const existingUser = await this.userRepository.findById(paramsId);
     if (!existingUser) {
-      return err(new Error('Usuário não encontrado.'));
+      return err(new AppError('Usuário não encontrado.', 404));
     }
 
     if (!UtilsFileUser.existsFolderUser(paramsId)) {
-      return err(new Error('INTERNAL: Pasta do usuário não encontrada.')); // culpa do sistema → 500
+      return err(new AppError('Pasta do usuário não encontrada.', 500)); // interno
     }
 
     try {
       UtilsFileUser.deleteFolderUser(paramsId);
       await this.userRepository.delete(paramsId);
     } catch {
-      return err(new Error('Erro ao tentar deletar usuário.'));
+      return err(new AppError('Erro ao tentar deletar.', 500)); // interno
     }
 
     return ok(undefined);
