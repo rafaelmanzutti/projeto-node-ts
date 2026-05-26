@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-export class UtilsFileUser {
+export class UserFileUtils {
   private static _userPath = ['assets', 'files'];
 
   private static _validateFolderUser(userId: string) {

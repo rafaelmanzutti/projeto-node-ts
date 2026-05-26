@@ -3,7 +3,7 @@ import { hash } from 'bcrypt';
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO.js';
 import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
-import { UtilsFileUser } from '../../utils/utils-file.js';
+import { UserFileUtils } from '../../utils/UserFileUtils.js';
 import { Result, ok, err } from '../../../../shared/types/Result.js';
 import { AppError } from '../../../../shared/types/AppError.js';
 
@@ -28,7 +28,7 @@ export class UserService {
     };
     try {
       const created = await this.userRepository.create(user);
-      UtilsFileUser.createFolderUser(created.id);
+      UserFileUtils.createFolderUser(created.id);
       return ok(created);
     } catch {
       return err(new AppError('Erro ao tentar criar usuário.', 500));
@@ -58,12 +58,12 @@ export class UserService {
       return err(new AppError('Usuário não encontrado.', 404));
     }
 
-    if (!UtilsFileUser.existsFolderUser(paramsId)) {
+    if (!UserFileUtils.existsFolderUser(paramsId)) {
       return err(new AppError('Pasta do usuário não encontrada.', 500)); // interno
     }
 
     try {
-      UtilsFileUser.deleteFolderUser(paramsId);
+      UserFileUtils.deleteFolderUser(paramsId);
       await this.userRepository.delete(paramsId);
     } catch {
       return err(new AppError('Erro ao tentar deletar.', 500)); // interno
