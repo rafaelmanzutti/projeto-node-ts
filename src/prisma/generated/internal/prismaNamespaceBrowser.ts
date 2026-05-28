@@ -51,7 +51,8 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  ResetPasswordSecret: 'ResetPasswordSecret'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -80,6 +81,15 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const ResetPasswordSecretScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  secret: 'secret'
+} as const
+
+export type ResetPasswordSecretScalarFieldEnum = (typeof ResetPasswordSecretScalarFieldEnum)[keyof typeof ResetPasswordSecretScalarFieldEnum]
 
 
 export const SortOrder = {

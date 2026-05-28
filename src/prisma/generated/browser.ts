@@ -22,3 +22,8 @@ export * from './enums.js';
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model ResetPasswordSecret
+ * 
+ */
+export type ResetPasswordSecret = Prisma.ResetPasswordSecretModel
