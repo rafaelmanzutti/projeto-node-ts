@@ -44,12 +44,9 @@ export class UserService {
     if (!existingUser) {
       return err(new AppError('Dados não encontrados.', 404));
     }
-    try {
-      const updated = await this.userRepository.update(paramsId, name);
-      return ok(updated);
-    } catch {
-      return err(new AppError('Erro ao tentar atualizar usuário.', 500));
-    }
+
+    const updated = await this.userRepository.update(paramsId, name);
+    return ok(updated);
   }
 
   public async delete(paramsId: string): Promise<Result<void>> {

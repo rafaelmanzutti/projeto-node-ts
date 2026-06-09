@@ -29,21 +29,27 @@ class AuthController {
     const userRepository = new PrismaUserRepository();
     const authService = new AuthService(userRepository);
 
-    const result = await authService.login({ email, password });
-    if (!result.ok) {
-      const { statusCode } = result.error as AppError;
+    try {
+      const result = await authService.login({ email, password });
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-      if (statusCode >= 500) {
-        logger.error(result.error.message);
+        if (statusCode >= 500) {
+          logger.error(result.error.message);
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
       }
 
-      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
-      return res.status(statusCode).json({ message });
+      return res.json({
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
     }
-
-    return res.json({
-      data: result.value,
-    });
   }
 
   async token(req: Request, res: Response) {
@@ -65,21 +71,27 @@ class AuthController {
     const userRepository = new PrismaUserRepository();
     const authService = new AuthService(userRepository);
 
-    const result = await authService.token(refreshToken);
-    if (!result.ok) {
-      const { statusCode } = result.error as AppError;
+    try {
+      const result = await authService.token(refreshToken);
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-      if (statusCode >= 500) {
-        logger.error(result.error.message);
+        if (statusCode >= 500) {
+          logger.error(result.error.message);
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
       }
 
-      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
-      return res.status(statusCode).json({ message });
+      return res.json({
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
     }
-
-    return res.json({
-      data: result.value,
-    });
   }
 }
 

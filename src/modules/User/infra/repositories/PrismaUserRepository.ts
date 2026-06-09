@@ -69,4 +69,12 @@ export class PrismaUserRepository implements IUserRepository {
     });
     return user as unknown as IUser | null;
   }
+
+  async findByEmailWithResetSecret(email: string): Promise<IUser | null> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { resetPasswordSecret: true },
+    });
+    return user as unknown as IUser | null;
+  }
 }

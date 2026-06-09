@@ -38,22 +38,28 @@ class UserController {
     const userRepository = new PrismaUserRepository();
     const userService = new UserService(userRepository);
 
-    const result = await userService.create({ name, email, password });
-    if (!result.ok) {
-      const { statusCode } = result.error as AppError;
+    try {
+      const result = await userService.create({ name, email, password });
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-      if (statusCode >= 500) {
-        logger.error(result.error.message);
+        if (statusCode >= 500) {
+          logger.error(result.error.message);
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
       }
 
-      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
-      return res.status(statusCode).json({ message });
+      return res.json({
+        message: 'Criado com Sucesso.',
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
     }
-
-    return res.json({
-      message: 'Criado com Sucesso.',
-      data: result.value,
-    });
   }
 
   public async read(req: Request, res: Response): Promise<Response> {
@@ -70,15 +76,20 @@ class UserController {
     const userRepository = new PrismaUserRepository();
     const userService = new UserService(userRepository);
 
-    const user = await userService.read(paramsId);
-    if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado.' });
-    }
+    try {
+      const user = await userService.read(paramsId);
+      if (!user) {
+        return res.status(404).json({ message: 'Usuário não encontrado.' });
+      }
 
-    return res.json({
-      message: 'Usuário encontrado.',
-      data: user,
-    });
+      return res.json({
+        message: 'Usuário encontrado.',
+        data: user,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
+    }
   }
 
   public async update(req: Request, res: Response): Promise<Response> {
@@ -96,22 +107,28 @@ class UserController {
     const userRepository = new PrismaUserRepository();
     const userService = new UserService(userRepository);
 
-    const result = await userService.update(paramsId, name);
-    if (!result.ok) {
-      const { statusCode } = result.error as AppError;
+    try {
+      const result = await userService.update(paramsId, name);
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-      if (statusCode >= 500) {
-        logger.error(result.error.message);
+        if (statusCode >= 500) {
+          logger.error(result.error.message);
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
       }
 
-      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
-      return res.status(statusCode).json({ message });
+      return res.json({
+        message: 'Atualizado com sucesso!',
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
     }
-
-    return res.json({
-      message: 'Atualizado com sucesso!',
-      data: result.value,
-    });
   }
 
   public async delete(req: Request, res: Response): Promise<Response> {
@@ -128,22 +145,28 @@ class UserController {
     const userRepository = new PrismaUserRepository();
     const userService = new UserService(userRepository);
 
-    const result = await userService.delete(paramsId);
-    if (!result.ok) {
-      const { statusCode } = result.error as AppError;
+    try {
+      const result = await userService.delete(paramsId);
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-      if (statusCode >= 500) {
-        logger.error({ userId: paramsId }, result.error.message); // só aparece no terminal do servidor
+        if (statusCode >= 500) {
+          logger.error({ userId: paramsId }, result.error.message); // só aparece no terminal do servidor
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+
+        return res.status(statusCode).json({ message });
       }
 
-      const message = statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
-
-      return res.status(statusCode).json({ message });
+      return res.json({
+        message: 'Usuário deletado com sucesso!',
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
     }
-
-    return res.json({
-      message: 'Usuário deletado com sucesso!',
-    });
   }
 }
 
