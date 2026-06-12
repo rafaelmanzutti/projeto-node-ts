@@ -51,7 +51,52 @@ class ResetPasswordController {
       return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
     }
   }
-  //async validateSecurityCode(request: Request, response: Response): Promise<void> {}
+
+  async validateSecurityCode(req: Request, res: Response): Promise<Response> {
+    const { email, secret } = req.body;
+
+    const ZValidateSecurityCodeSchema = z.object({
+      email: z.email({ message: 'Email é obrigatório' }),
+      secret: z.string().min(6, { message: 'Código de segurança é obrigatório' }),
+    });
+
+    const validation = ZValidateSecurityCodeSchema.safeParse({ email, secret });
+    if (!validation.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validation.error.issues,
+      });
+    }
+    const userRepository = new PrismaUserRepository();
+    const resetPasswordSecretRepository = new PrismaResetPasswordSecretRepository();
+    const resetPasswordService = new ResetPasswordService(
+      userRepository,
+      resetPasswordSecretRepository,
+    );
+
+    try {
+      const result = await resetPasswordService.validateSecurityCode(email, Number(secret));
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
+
+        if (statusCode >= 500) {
+          logger.error(result.error.message);
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
+      }
+
+      return res.json({
+        message: 'Código de segurança validado com sucesso.',
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
+    }
+  }
   //async resetPassword(request: Request, response: Response): Promise<void> {}
 }
 
