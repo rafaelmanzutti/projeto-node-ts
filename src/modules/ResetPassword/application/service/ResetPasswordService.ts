@@ -1,9 +1,11 @@
 import { randomUUID } from 'crypto';
+import bcrypt from 'bcrypt';
 import { AppError } from '../../../../shared/types/AppError.js';
 import { Result, ok, err } from '../../../../shared/types/Result.js';
 import { IUserRepository } from '../../../User/domain/IUserRepository.js';
 import { IResetPasswordSecretRepository } from '../../domain/IResetPasswordSecretRepository.js';
 import { IValidateUserSecretDTO } from '../dtos/IValidateUserSecretDTO.js';
+import { IUser } from '../../../User/domain/User.js';
 //import { SendEmailUtils } from '../../utils/SendEmailUtils.js';
 
 export class ResetPasswordService {
@@ -58,5 +60,34 @@ export class ResetPasswordService {
     }
     return ok({ email: existingUser.email, secret: existingUser.resetPasswordSecret.secret });
   }
-  //async resetPassword(): Promise<void> {}
+
+  async resetPassword(email: string, secret: number, newPassword: string): Promise<Result<IUser>> {
+    const existingUser = await this.userRepository.findByEmailWithResetSecret(email);
+
+    if (!existingUser) {
+      return err(new AppError('Dados não encontrados.', 404));
+    }
+    if (
+      !existingUser.resetPasswordSecret ||
+      existingUser.resetPasswordSecret.secret !== Number(secret)
+    ) {
+      return err(new AppError('Código de segurança inválido.', 400));
+    }
+
+    const bcryptPassword = bcrypt.hashSync(newPassword, 6);
+    let updated = {};
+    try {
+      updated = await this.userRepository.update(existingUser.id, { password: bcryptPassword });
+    } catch {
+      return err(new AppError('Erro ao tentar atualizar password.', 500));
+    }
+
+    try {
+      await this.resetPasswordSecretRepository.delete(existingUser.id);
+    } catch {
+      return err(new AppError('Erro ao tentar deletar secret.', 500));
+    }
+
+    return ok(updated as IUser);
+  }
 }

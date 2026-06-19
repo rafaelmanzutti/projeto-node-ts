@@ -14,4 +14,10 @@ export class PrismaResetPasswordSecretRepository implements IResetPasswordSecret
     });
     return created;
   }
+
+  async delete(userId: string): Promise<void> {
+    await prisma.resetPasswordSecret.delete({
+      where: { userId },
+    });
+  }
 }

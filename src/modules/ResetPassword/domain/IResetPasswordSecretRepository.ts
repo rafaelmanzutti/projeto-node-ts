@@ -3,4 +3,5 @@ import { IResetPasswordSecret } from './ResetPasswordSecret.js';
 
 export interface IResetPasswordSecretRepository {
   create(data: ICreateResetPasswordSecretDTO): Promise<IResetPasswordSecret>;
+  delete(userId: string): Promise<void>;
 }

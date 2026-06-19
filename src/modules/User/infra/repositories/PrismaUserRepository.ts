@@ -1,4 +1,5 @@
 import { prisma } from '../../../../shared/infra/database/prisma.js';
+import { IUpdateUserDTO } from '../../application/dtos/IUpdateUserDTO.js';
 import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
 
@@ -21,13 +22,13 @@ export class PrismaUserRepository implements IUserRepository {
     return created as unknown as IUser;
   }
 
-  async update(paramsId: string, name: string): Promise<IUser> {
+  async update(paramsId: string, data: IUpdateUserDTO): Promise<IUser> {
     const updated = await prisma.user.update({
       where: {
         id: paramsId,
       },
       data: {
-        name,
+        ...data,
       },
       select: {
         id: true,
@@ -73,6 +74,7 @@ export class PrismaUserRepository implements IUserRepository {
   async findByEmailWithResetSecret(email: string): Promise<IUser | null> {
     const user = await prisma.user.findUnique({
       where: { email },
+      omit: { password: true },
       include: { resetPasswordSecret: true },
     });
     return user as unknown as IUser | null;
