@@ -385,7 +385,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
-  ResetPasswordSecret: 'ResetPasswordSecret'
+  ResetPasswordSecret: 'ResetPasswordSecret',
+  UserClient: 'UserClient'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "resetPasswordSecret"
+    modelProps: "user" | "resetPasswordSecret" | "userClient"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -553,6 +554,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserClient: {
+      payload: Prisma.$UserClientPayload<ExtArgs>
+      fields: Prisma.UserClientFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserClientFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserClientFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>
+        }
+        findFirst: {
+          args: Prisma.UserClientFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserClientFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>
+        }
+        findMany: {
+          args: Prisma.UserClientFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>[]
+        }
+        create: {
+          args: Prisma.UserClientCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>
+        }
+        createMany: {
+          args: Prisma.UserClientCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserClientCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>[]
+        }
+        delete: {
+          args: Prisma.UserClientDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>
+        }
+        update: {
+          args: Prisma.UserClientUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserClientDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserClientUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserClientUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserClientUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserClientPayload>
+        }
+        aggregate: {
+          args: Prisma.UserClientAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserClient>
+        }
+        groupBy: {
+          args: Prisma.UserClientGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserClientGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserClientCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserClientCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -611,6 +686,19 @@ export const ResetPasswordSecretScalarFieldEnum = {
 } as const
 
 export type ResetPasswordSecretScalarFieldEnum = (typeof ResetPasswordSecretScalarFieldEnum)[keyof typeof ResetPasswordSecretScalarFieldEnum]
+
+
+export const UserClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type UserClientScalarFieldEnum = (typeof UserClientScalarFieldEnum)[keyof typeof UserClientScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -810,6 +898,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
   resetPasswordSecret?: Prisma.ResetPasswordSecretOmit
+  userClient?: Prisma.UserClientOmit
 }
 
 /* Types for Logging */

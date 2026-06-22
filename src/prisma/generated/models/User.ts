@@ -191,6 +191,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   resetPasswordSecret?: Prisma.XOR<Prisma.ResetPasswordSecretNullableScalarRelationFilter, Prisma.ResetPasswordSecretWhereInput> | null
+  userClient?: Prisma.UserClientListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   resetPasswordSecret?: Prisma.ResetPasswordSecretOrderByWithRelationInput
+  userClient?: Prisma.UserClientOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -214,6 +216,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   resetPasswordSecret?: Prisma.XOR<Prisma.ResetPasswordSecretNullableScalarRelationFilter, Prisma.ResetPasswordSecretWhereInput> | null
+  userClient?: Prisma.UserClientListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -248,6 +251,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resetPasswordSecret?: Prisma.ResetPasswordSecretCreateNestedOneWithoutUserInput
+  userClient?: Prisma.UserClientCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -258,6 +262,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   resetPasswordSecret?: Prisma.ResetPasswordSecretUncheckedCreateNestedOneWithoutUserInput
+  userClient?: Prisma.UserClientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -268,6 +273,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resetPasswordSecret?: Prisma.ResetPasswordSecretUpdateOneWithoutUserNestedInput
+  userClient?: Prisma.UserClientUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -278,6 +284,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   resetPasswordSecret?: Prisma.ResetPasswordSecretUncheckedUpdateOneWithoutUserNestedInput
+  userClient?: Prisma.UserClientUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -365,6 +372,20 @@ export type UserUpdateOneRequiredWithoutResetPasswordSecretNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutResetPasswordSecretInput, Prisma.UserUpdateWithoutResetPasswordSecretInput>, Prisma.UserUncheckedUpdateWithoutResetPasswordSecretInput>
 }
 
+export type UserCreateNestedOneWithoutUserClientInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserClientInput, Prisma.UserUncheckedCreateWithoutUserClientInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserClientInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutUserClientNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutUserClientInput, Prisma.UserUncheckedCreateWithoutUserClientInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserClientInput
+  upsert?: Prisma.UserUpsertWithoutUserClientInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserClientInput, Prisma.UserUpdateWithoutUserClientInput>, Prisma.UserUncheckedUpdateWithoutUserClientInput>
+}
+
 export type UserCreateWithoutResetPasswordSecretInput = {
   id?: string
   name?: string | null
@@ -372,6 +393,7 @@ export type UserCreateWithoutResetPasswordSecretInput = {
   password: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  userClient?: Prisma.UserClientCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutResetPasswordSecretInput = {
@@ -381,6 +403,7 @@ export type UserUncheckedCreateWithoutResetPasswordSecretInput = {
   password: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  userClient?: Prisma.UserClientUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutResetPasswordSecretInput = {
@@ -406,6 +429,7 @@ export type UserUpdateWithoutResetPasswordSecretInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userClient?: Prisma.UserClientUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutResetPasswordSecretInput = {
@@ -415,8 +439,94 @@ export type UserUncheckedUpdateWithoutResetPasswordSecretInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userClient?: Prisma.UserClientUncheckedUpdateManyWithoutUserNestedInput
 }
 
+export type UserCreateWithoutUserClientInput = {
+  id?: string
+  name?: string | null
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resetPasswordSecret?: Prisma.ResetPasswordSecretCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutUserClientInput = {
+  id?: string
+  name?: string | null
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  resetPasswordSecret?: Prisma.ResetPasswordSecretUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutUserClientInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserClientInput, Prisma.UserUncheckedCreateWithoutUserClientInput>
+}
+
+export type UserUpsertWithoutUserClientInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutUserClientInput, Prisma.UserUncheckedUpdateWithoutUserClientInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutUserClientInput, Prisma.UserUncheckedCreateWithoutUserClientInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutUserClientInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutUserClientInput, Prisma.UserUncheckedUpdateWithoutUserClientInput>
+}
+
+export type UserUpdateWithoutUserClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordSecret?: Prisma.ResetPasswordSecretUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutUserClientInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resetPasswordSecret?: Prisma.ResetPasswordSecretUncheckedUpdateOneWithoutUserNestedInput
+}
+
+
+/**
+ * Count Type UserCountOutputType
+ */
+
+export type UserCountOutputType = {
+  userClient: number
+}
+
+export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  userClient?: boolean | UserCountOutputTypeCountUserClientArgs
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserCountOutputType
+   */
+  select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountUserClientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserClientWhereInput
+}
 
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -427,6 +537,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   resetPasswordSecret?: boolean | Prisma.User$resetPasswordSecretArgs<ExtArgs>
+  userClient?: boolean | Prisma.User$userClientArgs<ExtArgs>
+  _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -459,6 +571,8 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   resetPasswordSecret?: boolean | Prisma.User$resetPasswordSecretArgs<ExtArgs>
+  userClient?: boolean | Prisma.User$userClientArgs<ExtArgs>
+  _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -467,6 +581,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     resetPasswordSecret: Prisma.$ResetPasswordSecretPayload<ExtArgs> | null
+    userClient: Prisma.$UserClientPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -870,6 +985,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   resetPasswordSecret<T extends Prisma.User$resetPasswordSecretArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resetPasswordSecretArgs<ExtArgs>>): Prisma.Prisma__ResetPasswordSecretClient<runtime.Types.Result.GetResult<Prisma.$ResetPasswordSecretPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  userClient<T extends Prisma.User$userClientArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userClientArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserClientPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1314,6 +1430,30 @@ export type User$resetPasswordSecretArgs<ExtArgs extends runtime.Types.Extension
    */
   include?: Prisma.ResetPasswordSecretInclude<ExtArgs> | null
   where?: Prisma.ResetPasswordSecretWhereInput
+}
+
+/**
+ * User.userClient
+ */
+export type User$userClientArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserClient
+   */
+  select?: Prisma.UserClientSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserClient
+   */
+  omit?: Prisma.UserClientOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserClientInclude<ExtArgs> | null
+  where?: Prisma.UserClientWhereInput
+  orderBy?: Prisma.UserClientOrderByWithRelationInput | Prisma.UserClientOrderByWithRelationInput[]
+  cursor?: Prisma.UserClientWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserClientScalarFieldEnum | Prisma.UserClientScalarFieldEnum[]
 }
 
 /**

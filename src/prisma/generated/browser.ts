@@ -27,3 +27,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type ResetPasswordSecret = Prisma.ResetPasswordSecretModel
+/**
+ * Model UserClient
+ * 
+ */
+export type UserClient = Prisma.UserClientModel

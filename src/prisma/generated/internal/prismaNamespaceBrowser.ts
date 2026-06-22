@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  ResetPasswordSecret: 'ResetPasswordSecret'
+  ResetPasswordSecret: 'ResetPasswordSecret',
+  UserClient: 'UserClient'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -90,6 +91,19 @@ export const ResetPasswordSecretScalarFieldEnum = {
 } as const
 
 export type ResetPasswordSecretScalarFieldEnum = (typeof ResetPasswordSecretScalarFieldEnum)[keyof typeof ResetPasswordSecretScalarFieldEnum]
+
+
+export const UserClientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+} as const
+
+export type UserClientScalarFieldEnum = (typeof UserClientScalarFieldEnum)[keyof typeof UserClientScalarFieldEnum]
 
 
 export const SortOrder = {

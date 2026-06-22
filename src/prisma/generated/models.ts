@@ -10,4 +10,5 @@
  */
 export type * from './models/User.js'
 export type * from './models/ResetPasswordSecret.js'
+export type * from './models/UserClient.js'
 export type * from './commonInputTypes.js'
