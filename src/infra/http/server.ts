@@ -1,3 +1,4 @@
+import '../../shared/types/express-request.js';
 import express from 'express';
 import { routes } from './routes.js';
 
