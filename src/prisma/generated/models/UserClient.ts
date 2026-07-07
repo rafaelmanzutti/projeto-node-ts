@@ -20,25 +20,15 @@ export type UserClientModel = runtime.Types.Result.DefaultSelection<Prisma.$User
 
 export type AggregateUserClient = {
   _count: UserClientCountAggregateOutputType | null
-  _avg: UserClientAvgAggregateOutputType | null
-  _sum: UserClientSumAggregateOutputType | null
   _min: UserClientMinAggregateOutputType | null
   _max: UserClientMaxAggregateOutputType | null
-}
-
-export type UserClientAvgAggregateOutputType = {
-  phone: number | null
-}
-
-export type UserClientSumAggregateOutputType = {
-  phone: number | null
 }
 
 export type UserClientMinAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
-  phone: number | null
+  phone: string | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: string | null
@@ -48,7 +38,7 @@ export type UserClientMaxAggregateOutputType = {
   id: string | null
   name: string | null
   email: string | null
-  phone: number | null
+  phone: string | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: string | null
@@ -65,14 +55,6 @@ export type UserClientCountAggregateOutputType = {
   _all: number
 }
 
-
-export type UserClientAvgAggregateInputType = {
-  phone?: true
-}
-
-export type UserClientSumAggregateInputType = {
-  phone?: true
-}
 
 export type UserClientMinAggregateInputType = {
   id?: true
@@ -143,18 +125,6 @@ export type UserClientAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: UserClientAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: UserClientSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserClientMinAggregateInputType
@@ -185,8 +155,6 @@ export type UserClientGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: UserClientCountAggregateInputType | true
-  _avg?: UserClientAvgAggregateInputType
-  _sum?: UserClientSumAggregateInputType
   _min?: UserClientMinAggregateInputType
   _max?: UserClientMaxAggregateInputType
 }
@@ -195,13 +163,11 @@ export type UserClientGroupByOutputType = {
   id: string
   name: string
   email: string | null
-  phone: number | null
+  phone: string | null
   createdAt: Date
   updatedAt: Date
   userId: string
   _count: UserClientCountAggregateOutputType | null
-  _avg: UserClientAvgAggregateOutputType | null
-  _sum: UserClientSumAggregateOutputType | null
   _min: UserClientMinAggregateOutputType | null
   _max: UserClientMaxAggregateOutputType | null
 }
@@ -228,7 +194,7 @@ export type UserClientWhereInput = {
   id?: Prisma.StringFilter<"UserClient"> | string
   name?: Prisma.StringFilter<"UserClient"> | string
   email?: Prisma.StringNullableFilter<"UserClient"> | string | null
-  phone?: Prisma.IntNullableFilter<"UserClient"> | number | null
+  phone?: Prisma.StringNullableFilter<"UserClient"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserClient"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserClient"> | Date | string
   userId?: Prisma.StringFilter<"UserClient"> | string
@@ -253,7 +219,7 @@ export type UserClientWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserClientWhereInput | Prisma.UserClientWhereInput[]
   name?: Prisma.StringFilter<"UserClient"> | string
   email?: Prisma.StringNullableFilter<"UserClient"> | string | null
-  phone?: Prisma.IntNullableFilter<"UserClient"> | number | null
+  phone?: Prisma.StringNullableFilter<"UserClient"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserClient"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserClient"> | Date | string
   userId?: Prisma.StringFilter<"UserClient"> | string
@@ -269,10 +235,8 @@ export type UserClientOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.UserClientCountOrderByAggregateInput
-  _avg?: Prisma.UserClientAvgOrderByAggregateInput
   _max?: Prisma.UserClientMaxOrderByAggregateInput
   _min?: Prisma.UserClientMinOrderByAggregateInput
-  _sum?: Prisma.UserClientSumOrderByAggregateInput
 }
 
 export type UserClientScalarWhereWithAggregatesInput = {
@@ -282,7 +246,7 @@ export type UserClientScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"UserClient"> | string
   name?: Prisma.StringWithAggregatesFilter<"UserClient"> | string
   email?: Prisma.StringNullableWithAggregatesFilter<"UserClient"> | string | null
-  phone?: Prisma.IntNullableWithAggregatesFilter<"UserClient"> | number | null
+  phone?: Prisma.StringNullableWithAggregatesFilter<"UserClient"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"UserClient"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"UserClient"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"UserClient"> | string
@@ -292,7 +256,7 @@ export type UserClientCreateInput = {
   id?: string
   name: string
   email?: string | null
-  phone?: number | null
+  phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutUserClientInput
@@ -302,7 +266,7 @@ export type UserClientUncheckedCreateInput = {
   id?: string
   name: string
   email?: string | null
-  phone?: number | null
+  phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -312,7 +276,7 @@ export type UserClientUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutUserClientNestedInput
@@ -322,7 +286,7 @@ export type UserClientUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -332,7 +296,7 @@ export type UserClientCreateManyInput = {
   id?: string
   name: string
   email?: string | null
-  phone?: number | null
+  phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
@@ -342,7 +306,7 @@ export type UserClientUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -351,7 +315,7 @@ export type UserClientUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -377,10 +341,6 @@ export type UserClientCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
 }
 
-export type UserClientAvgOrderByAggregateInput = {
-  phone?: Prisma.SortOrder
-}
-
 export type UserClientMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -399,10 +359,6 @@ export type UserClientMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-}
-
-export type UserClientSumOrderByAggregateInput = {
-  phone?: Prisma.SortOrder
 }
 
 export type UserClientCreateNestedManyWithoutUserInput = {
@@ -447,19 +403,11 @@ export type UserClientUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.UserClientScalarWhereInput | Prisma.UserClientScalarWhereInput[]
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type UserClientCreateWithoutUserInput = {
   id?: string
   name: string
   email?: string | null
-  phone?: number | null
+  phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -468,7 +416,7 @@ export type UserClientUncheckedCreateWithoutUserInput = {
   id?: string
   name: string
   email?: string | null
-  phone?: number | null
+  phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -506,7 +454,7 @@ export type UserClientScalarWhereInput = {
   id?: Prisma.StringFilter<"UserClient"> | string
   name?: Prisma.StringFilter<"UserClient"> | string
   email?: Prisma.StringNullableFilter<"UserClient"> | string | null
-  phone?: Prisma.IntNullableFilter<"UserClient"> | number | null
+  phone?: Prisma.StringNullableFilter<"UserClient"> | string | null
   createdAt?: Prisma.DateTimeFilter<"UserClient"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"UserClient"> | Date | string
   userId?: Prisma.StringFilter<"UserClient"> | string
@@ -516,7 +464,7 @@ export type UserClientCreateManyUserInput = {
   id?: string
   name: string
   email?: string | null
-  phone?: number | null
+  phone?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -525,7 +473,7 @@ export type UserClientUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -534,7 +482,7 @@ export type UserClientUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -543,7 +491,7 @@ export type UserClientUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -613,7 +561,7 @@ export type $UserClientPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     name: string
     email: string | null
-    phone: number | null
+    phone: string | null
     createdAt: Date
     updatedAt: Date
     userId: string
@@ -1044,7 +992,7 @@ export interface UserClientFieldRefs {
   readonly id: Prisma.FieldRef<"UserClient", 'String'>
   readonly name: Prisma.FieldRef<"UserClient", 'String'>
   readonly email: Prisma.FieldRef<"UserClient", 'String'>
-  readonly phone: Prisma.FieldRef<"UserClient", 'Int'>
+  readonly phone: Prisma.FieldRef<"UserClient", 'String'>
   readonly createdAt: Prisma.FieldRef<"UserClient", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"UserClient", 'DateTime'>
   readonly userId: Prisma.FieldRef<"UserClient", 'String'>
