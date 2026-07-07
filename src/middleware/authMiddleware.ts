@@ -31,34 +31,21 @@ export class AuthMiddleware {
         error: validation.error.issues,
       });
     }
-    // try {
-    //   jwt.verify(token, env.JWT_SECRET);
-    // } catch {
-    //   return res.status(401).json({ message: 'Token inválido ou expirado.' });
-    // }
 
-    // const paramsId = req.params.id;
-    // const decode = (jwt.decode(token) as { payload: { id: string } }).payload;
-    // if (paramsId && decode.id !== paramsId) {
-    //   return res.status(403).json({ message: 'Acesso negado.' });
-    // }
-    // req.tokenUserId = decode.id;
-    // next();
     try {
-      // 2. O verify valida a assinatura E já devolve os dados decodificados com segurança
+      // O verify valida a assinatura E já devolve os dados decodificados com segurança
       const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayloadCustom;
       const userId = decoded.payload.id;
 
-      // 3. Validação do ID do parâmetro usando a variável segura do try
+      // Validação do ID do parâmetro usando a variável do try para comparar
       const paramsId = req.params.id;
       if (paramsId && userId !== paramsId) {
         return res.status(403).json({ message: 'Acesso negado.' });
       }
 
-      // 4. Injeta o ID verificado no Request (o TS não vai reclamar graças ao seu server.ts)
+      // Injeta o ID verificado no Request (o TS não vai reclamar graças ao server.ts)
       req.tokenUserId = userId;
 
-      // 5. Return para encerrar o ciclo do middleware com segurança
       return next();
     } catch {
       // Se a assinatura falhar, cairá aqui e bloqueará a requisição imediatamente

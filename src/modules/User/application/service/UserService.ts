@@ -3,12 +3,15 @@ import { hash } from 'bcrypt';
 import { ICreateUserDTO } from '../dtos/ICreateUserDTO.js';
 import { IUserRepository } from '../../domain/IUserRepository.js';
 import { IUser } from '../../domain/User.js';
-import { UserFileUtils } from '../../utils/UserFileUtils.js';
 import { Result, ok, err } from '../../../../shared/types/Result.js';
 import { AppError } from '../../../../shared/types/AppError.js';
+import { IStorageRepository } from '../../../../shared/types/IStorageRepository.js';
 
 export class UserService {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private fileStorage: IStorageRepository,
+  ) {}
 
   public async create(data: ICreateUserDTO): Promise<Result<IUser>> {
     const existingUser = await this.userRepository.findByEmail(data.email);
@@ -26,9 +29,18 @@ export class UserService {
       createdAt: now,
       updatedAt: now,
     };
+
     try {
       const created = await this.userRepository.create(user);
-      UserFileUtils.createFolderUser(created.id);
+      const folderCreated = this.fileStorage.createFolder([created.id]);
+      if (!folderCreated) {
+        try {
+          await this.userRepository.delete(created.id);
+        } catch (ignore) {
+          console.error('Rollback falhou ao deletar usuário recém-criado', ignore);
+        }
+        return err(new AppError('Erro ao tentar criar usuário.', 500));
+      }
       return ok(created);
     } catch {
       return err(new AppError('Erro ao tentar criar usuário.', 500));
@@ -58,12 +70,12 @@ export class UserService {
       return err(new AppError('Usuário não encontrado.', 404));
     }
 
-    if (!UserFileUtils.existsFolderUser(paramsId)) {
+    if (!this.fileStorage.existsFolder([paramsId])) {
       return err(new AppError('Pasta do usuário não encontrada.', 500)); // interno
     }
 
     try {
-      UserFileUtils.deleteFolderUser(paramsId);
+      this.fileStorage.deleteFolder([paramsId]);
       await this.userRepository.delete(paramsId);
     } catch {
       return err(new AppError('Erro ao tentar deletar.', 500)); // interno

@@ -5,6 +5,7 @@ import pino from 'pino';
 import { UserService } from '../../application/service/UserService.js';
 import { PrismaUserRepository } from '../repositories/PrismaUserRepository.js';
 import { AppError } from '../../../../shared/types/AppError.js';
+import { FileStorageRepository } from '../../../../shared/infra/storage/FileStorageRepository.js';
 
 const logger = pino();
 
@@ -36,7 +37,8 @@ class UserController {
     }
 
     const userRepository = new PrismaUserRepository();
-    const userService = new UserService(userRepository);
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userService = new UserService(userRepository, fileStorage);
 
     try {
       const result = await userService.create({ name, email, password });
@@ -74,7 +76,8 @@ class UserController {
     }
 
     const userRepository = new PrismaUserRepository();
-    const userService = new UserService(userRepository);
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userService = new UserService(userRepository, fileStorage);
 
     try {
       const user = await userService.read(paramsId);
@@ -105,7 +108,8 @@ class UserController {
     }
 
     const userRepository = new PrismaUserRepository();
-    const userService = new UserService(userRepository);
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userService = new UserService(userRepository, fileStorage);
 
     try {
       const result = await userService.update(paramsId, name);
@@ -143,7 +147,8 @@ class UserController {
     }
 
     const userRepository = new PrismaUserRepository();
-    const userService = new UserService(userRepository);
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userService = new UserService(userRepository, fileStorage);
 
     try {
       const result = await userService.delete(paramsId);
