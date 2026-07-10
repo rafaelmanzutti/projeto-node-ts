@@ -11,9 +11,7 @@ import { FileStorageRepository } from '../../../../shared/infra/storage/FileStor
 const logger = pino();
 
 const ZClientSchema = z.string().min(1, { message: 'Nome é obrigatório' });
-
-// const ZIdSchema = z.string().min(30, { message: 'ID é obrigatório' });
-
+const ZIdSchema = z.string().min(30, { message: 'ID é obrigatório' });
 // const ZIdNameSchema = z.object({
 //   paramsId: z.string().min(30, { message: 'ID é obrigatório' }),
 //   name: z.string().min(1, { message: 'Nome é obrigatório' }),
@@ -61,35 +59,42 @@ class UserClientController {
     }
   }
 
-  // public async read(req: Request, res: Response): Promise<Response> {
-  //   const paramsId = req.params.id as string;
+  public async read(req: Request, res: Response): Promise<Response> {
+    const paramsId = req.params.id as string;
+    const userId = req.tokenUserId;
 
-  //   const validation = ZIdSchema.safeParse(paramsId);
-  //   if (!validation.success) {
-  //     return res.status(400).json({
-  //       message: 'Dados Inválidos.',
-  //       error: validation.error.issues,
-  //     });
-  //   }
+    const validation = ZIdSchema.safeParse(paramsId);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validation.error.issues,
+      });
+    }
 
-  //   const userRepository = new PrismaUserRepository();
-  //   const userService = new UserService(userRepository);
+    const userRepository = new PrismaUserRepository();
+    const clientRepository = new PrismaClientRepository();
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userClientService = new UserClientService(userRepository, clientRepository, fileStorage);
 
-  //   try {
-  //     const user = await userService.read(paramsId);
-  //     if (!user) {
-  //       return res.status(404).json({ message: 'Usuário não encontrado.' });
-  //     }
+    try {
+      const result = await userClientService.read(paramsId, userId);
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
+        if (statusCode >= 500) logger.error(result.error.message);
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
+      }
 
-  //     return res.json({
-  //       message: 'Usuário encontrado.',
-  //       data: user,
-  //     });
-  //   } catch (error) {
-  //     logger.error(error);
-  //     return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
-  //   }
-  // }
+      return res.json({
+        message: 'Cliente encontrado.',
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
+    }
+  }
 
   // public async listAll(req: Request, res: Response): Promise<Response> {
   //   const paramsId = req.params.id as string;

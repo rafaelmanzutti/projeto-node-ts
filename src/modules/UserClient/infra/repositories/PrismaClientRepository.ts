@@ -19,6 +19,16 @@ export class PrismaClientRepository implements IClientRepository {
     return created;
   }
 
+  async findByIdUserId(paramsId: string, userId: string): Promise<IClient | null> {
+    const client = await prisma.userClient.findUnique({
+      where: {
+        id: paramsId,
+        userId: userId,
+      },
+    });
+    return client as unknown as IClient | null;
+  }
+
   // async update(paramsId: string, data: IUpdateUserDTO): Promise<IUser> {
   //   const updated = await prisma.user.update({
   //     where: {

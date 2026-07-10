@@ -50,9 +50,16 @@ export class UserClientService {
     }
   }
 
-  // public async read(paramsId: string): Promise<IUser | null> {
-  //   return this.userRepository.findById(paramsId);
-  // }
+  public async read(paramsId: string, userId: string): Promise<Result<IClient>> {
+    try {
+      const client = await this.clientRepository.findByIdUserId(paramsId, userId);
+      if (!client) return err(new AppError('Dados não encontrados.', 404));
+      return ok(client);
+    } catch (error) {
+      console.error('Erro ao buscar cliente:', error);
+      return err(new AppError('Erro interno ao buscar cliente.', 500));
+    }
+  }
 
   // public async listAll(paramsId: string): Promise<IUser | null> {
   //   return this.userRepository.findById(paramsId);

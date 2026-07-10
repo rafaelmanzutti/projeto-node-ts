@@ -3,10 +3,11 @@ import { IClient } from './Client.js';
 
 export interface IClientRepository {
   create(client: IClient): Promise<IClient>;
+  delete(id: string): Promise<IClient | null>;
+  findByIdUserId(id: string, userId: string): Promise<IClient | null>;
   //update(id: string, data: IUpdateUserDTO): Promise<IUser>;
   //findByEmail(email: string): Promise<IUser | null>;
   //findById(id: string): Promise<IUser | null>;
-  delete(id: string): Promise<IClient | null>;
   //findByEmailWithPassword(email: string): Promise<IUser | null>;
   //findByEmailWithResetSecret(email: string): Promise<IUser | null>;
 }
