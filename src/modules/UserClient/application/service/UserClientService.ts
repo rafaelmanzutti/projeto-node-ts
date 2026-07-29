@@ -8,6 +8,7 @@ import { Result, ok, err } from '../../../../shared/types/Result.js';
 import { AppError } from '../../../../shared/types/AppError.js';
 import { IClient } from '../../domain/Client.js';
 import { IStorageRepository } from '../../../../shared/types/IStorageRepository.js';
+import { IClientsPageDTO } from '../dtos/IClientsPageDTO.js';
 
 export class UserClientService {
   constructor(
@@ -61,9 +62,29 @@ export class UserClientService {
     }
   }
 
-  // public async listAll(paramsId: string): Promise<IUser | null> {
-  //   return this.userRepository.findById(paramsId);
-  // }
+  public async listAll(userId: string, page: number): Promise<Result<IClientsPageDTO>> {
+    const pageSize = 11;
+    const skip = (page - 1) * pageSize;
+
+    try {
+      const [totalCount, clients] = await Promise.all([
+        this.clientRepository.count(userId),
+        this.clientRepository.listByUserId(userId, skip, pageSize),
+      ]);
+
+      if (totalCount === 0) {
+        return ok({ page: 1, pageSize, totalCount: 0, totalPages: 0, clients: [] });
+      }
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+      if (page > totalPages) return err(new AppError('Página não encontrada.', 404));
+
+      return ok({ page, pageSize, totalCount, totalPages, clients });
+    } catch (error) {
+      console.error('Erro ao listar clientes:', error);
+      return err(new AppError('Erro interno ao listar clientes.', 500));
+    }
+  }
 
   // public async update(paramsId: string, name: string): Promise<Result<IUser>> {
   //   const existingUser = await this.userRepository.findById(paramsId);

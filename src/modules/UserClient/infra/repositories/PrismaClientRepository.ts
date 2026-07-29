@@ -29,6 +29,19 @@ export class PrismaClientRepository implements IClientRepository {
     return client as unknown as IClient | null;
   }
 
+  async count(userId: string): Promise<number> {
+    return prisma.userClient.count({ where: { userId } });
+  }
+
+  async listByUserId(userId: string, skip: number, take: number): Promise<IClient[]> {
+    return prisma.userClient.findMany({
+      where: { userId },
+      skip,
+      take,
+      orderBy: { createdAt: 'desc' },
+    }) as unknown as IClient[];
+  }
+
   // async update(paramsId: string, data: IUpdateUserDTO): Promise<IUser> {
   //   const updated = await prisma.user.update({
   //     where: {

@@ -96,38 +96,50 @@ class UserClientController {
     }
   }
 
-  // public async listAll(req: Request, res: Response): Promise<Response> {
-  //   const paramsId = req.params.id as string;
+  public async listAll(req: Request, res: Response): Promise<Response> {
+    const userId = req.tokenUserId;
+    let page = Number(req.query.page);
 
-  //   const validation = ZIdSchema.safeParse(paramsId);
-  //   if (!validation.success) {
-  //     return res.status(400).json({
-  //       message: 'Dados Inválidos.',
-  //       error: validation.error.issues,
-  //     });
-  //   }
+    if (!page || page <= 0 || isNaN(page)) {
+      page = 1;
+    }
 
-  //   const userRepository = new PrismaUserRepository();
-  //   const userService = new UserService(userRepository);
+    const validation = ZIdSchema.safeParse(userId);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validation.error.issues,
+      });
+    }
 
-  //   try {
-  //     const user = await userService.read(paramsId);
-  //     if (!user) {
-  //       return res.status(404).json({ message: 'Usuário não encontrado.' });
-  //     }
+    const userRepository = new PrismaUserRepository();
+    const clientRepository = new PrismaClientRepository();
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userClientService = new UserClientService(userRepository, clientRepository, fileStorage);
 
-  //     return res.json({
-  //       message: 'Usuário encontrado.',
-  //       data: user,
-  //     });
-  //   } catch (error) {
-  //     logger.error(error);
-  //     return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
-  //   }
-  // }
+    try {
+      const result = await userClientService.listAll(userId, page);
+      if (!result.ok) {
+        const statusCode = (result.error as AppError)?.statusCode ?? 500;
+        if (statusCode >= 500) logger.error(result.error);
+        const message =
+          statusCode >= 500
+            ? 'Erro interno. Contate o suporte.'
+            : ((result.error as AppError).message ?? 'Erro');
+        return res.status(statusCode).json({ message });
+      }
+      return res.json({
+        message: 'Clientes encontrados.',
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
+    }
+  }
 
   // public async update(req: Request, res: Response): Promise<Response> {
-  //   const { name } = req.body;
+  //   const { name, email, phone } = req.body;
   //   const paramsId = req.params.id as string;
 
   //   const validationId = ZIdNameSchema.safeParse({ paramsId, name });

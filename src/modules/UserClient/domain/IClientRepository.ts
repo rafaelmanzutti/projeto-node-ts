@@ -5,6 +5,8 @@ export interface IClientRepository {
   create(client: IClient): Promise<IClient>;
   delete(id: string): Promise<IClient | null>;
   findByIdUserId(id: string, userId: string): Promise<IClient | null>;
+  count(userId: string): Promise<number>;
+  listByUserId(userId: string, skip: number, take: number): Promise<IClient[]>;
   //update(id: string, data: IUpdateUserDTO): Promise<IUser>;
   //findByEmail(email: string): Promise<IUser | null>;
   //findById(id: string): Promise<IUser | null>;
