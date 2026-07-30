@@ -1,7 +1,7 @@
 import { prisma } from '../../../../shared/infra/database/prisma.js';
-//import { IUpdateUserDTO } from '../../application/dtos/IUpdateUserDTO.js';
 import { IClientRepository } from '../../domain/IClientRepository.js';
 import { IClient } from '../../domain/Client.js';
+import { IUpdateClientDTO } from '../../application/dtos/IUpdateClientDTO.js';
 
 export class PrismaClientRepository implements IClientRepository {
   async create(client: IClient): Promise<IClient> {
@@ -42,26 +42,31 @@ export class PrismaClientRepository implements IClientRepository {
     }) as unknown as IClient[];
   }
 
-  // async update(paramsId: string, data: IUpdateUserDTO): Promise<IUser> {
-  //   const updated = await prisma.user.update({
-  //     where: {
-  //       id: paramsId,
-  //     },
-  //     data: {
-  //       ...data,
-  //     },
-  //     select: {
-  //       id: true,
-  //       name: true,
-  //       email: true,
-  //     },
-  //   });
-  //   return updated as unknown as IUser;
-  // }
+  async update(paramsId: string, data: IUpdateClientDTO): Promise<IClient | null> {
+    try {
+      const updated = await prisma.userClient.update({
+        where: { id: paramsId },
+        data: { ...data },
+      });
+      return updated as unknown as IClient;
+    } catch (error: unknown) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        String((error as Record<string, unknown>).code) === 'P2025'
+      ) {
+        return null;
+      }
+      throw error;
+    }
+  }
 
-  async delete(id: string): Promise<IClient | null> {
+  async delete(paramsId: string): Promise<IClient | null> {
     const deleted = await prisma.userClient.delete({
-      where: { id },
+      where: {
+        id: paramsId,
+      },
       select: { id: true, name: true, email: true },
     });
     return deleted as unknown as IClient | null;

@@ -7,15 +7,23 @@ import { PrismaUserRepository } from '../../../User/infra/repositories/PrismaUse
 import { PrismaClientRepository } from '../repositories/PrismaClientRepository.js';
 import { AppError } from '../../../../shared/types/AppError.js';
 import { FileStorageRepository } from '../../../../shared/infra/storage/FileStorageRepository.js';
+import { IUpdateClientDTO } from '../../application/dtos/IUpdateClientDTO.js';
 
 const logger = pino();
 
-const ZClientSchema = z.string().min(1, { message: 'Nome é obrigatório' });
+const ZClientSchema = z.string().nonempty({ message: 'Nome é obrigatório' });
 const ZIdSchema = z.string().min(30, { message: 'ID é obrigatório' });
-// const ZIdNameSchema = z.object({
-//   paramsId: z.string().min(30, { message: 'ID é obrigatório' }),
-//   name: z.string().min(1, { message: 'Nome é obrigatório' }),
-// });
+
+const ZUpdateClientSchema = z
+  .object({
+    name: z.string().nonempty({ message: 'Nome não pode ser vazio' }),
+    email: z.email({ message: 'Email inválido' }).nonempty({ message: 'Email não pode ser vazio' }),
+    phone: z.string().nonempty({ message: 'Telefone não pode ser vazio' }),
+  })
+  .partial() // aceita ausência (undefined)
+  .refine((obj) => Object.keys(obj).length > 0, {
+    message: 'Informe ao menos um campo para atualizar',
+  });
 
 class UserClientController {
   public async create(req: Request, res: Response): Promise<Response> {
@@ -138,44 +146,51 @@ class UserClientController {
     }
   }
 
-  // public async update(req: Request, res: Response): Promise<Response> {
-  //   const { name, email, phone } = req.body;
-  //   const paramsId = req.params.id as string;
+  public async update(req: Request, res: Response): Promise<Response> {
+    const paramsId = req.params.id as string;
+    const userId = req.tokenUserId;
+    const data = req.body as IUpdateClientDTO;
 
-  //   const validationId = ZIdNameSchema.safeParse({ paramsId, name });
-  //   if (!validationId.success) {
-  //     return res.status(400).json({
-  //       message: 'Dados Inválidos.',
-  //       error: validationId.error.issues,
-  //     });
-  //   }
+    if (!userId) return res.status(401).json({ message: 'Não autorizado.' });
 
-  //   const userRepository = new PrismaUserRepository();
-  //   const userService = new UserService(userRepository);
+    const validationData = ZUpdateClientSchema.safeParse(data);
+    if (!validationData.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validationData.error.issues,
+      });
+    }
 
-  //   try {
-  //     const result = await userService.update(paramsId, name);
-  //     if (!result.ok) {
-  //       const { statusCode } = result.error as AppError;
+    const validData = validationData.data as IUpdateClientDTO;
 
-  //       if (statusCode >= 500) {
-  //         logger.error(result.error.message);
-  //       }
+    const userRepository = new PrismaUserRepository();
+    const clientRepository = new PrismaClientRepository();
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userClientService = new UserClientService(userRepository, clientRepository, fileStorage);
 
-  //       const message =
-  //         statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
-  //       return res.status(statusCode).json({ message });
-  //     }
+    try {
+      const result = await userClientService.update(paramsId, userId, validData);
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-  //     return res.json({
-  //       message: 'Atualizado com sucesso!',
-  //       data: result.value,
-  //     });
-  //   } catch (error) {
-  //     logger.error(error);
-  //     return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
-  //   }
-  // }
+        if (statusCode >= 500) {
+          logger.error(result.error.message);
+        }
+
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        return res.status(statusCode).json({ message });
+      }
+
+      return res.json({
+        message: 'Atualizado com sucesso!',
+        data: result.value,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
+    }
+  }
 
   // public async delete(req: Request, res: Response): Promise<Response> {
   //   const paramsId = req.params.id as string;
