@@ -113,23 +113,35 @@ export class UserClientService {
     }
   }
 
-  // public async delete(paramsId: string): Promise<Result<void>> {
-  //   const existingUser = await this.userRepository.findById(paramsId);
-  //   if (!existingUser) {
-  //     return err(new AppError('Usuário não encontrado.', 404));
-  //   }
+  public async delete(
+    paramsId: string,
+    userId: string,
+  ): Promise<Result<Pick<IClient, 'id' | 'name' | 'email'>>> {
+    const existingUser = await this.userRepository.findById(userId);
+    if (!existingUser) return err(new AppError('Dados não encontrados.', 404));
 
-  //   if (!this.fileStorage.existsFolder([paramsId])) {
-  //     return err(new AppError('Pasta do usuário não encontrada.', 500)); // interno
-  //   }
+    const existingClient = await this.clientRepository.findByIdUserId(paramsId, userId);
+    if (!existingClient) return err(new AppError('Dados não encontrados.', 404));
 
-  //   try {
-  //     this.fileStorage.deleteFolder([paramsId]);
-  //     await this.clientRepository.delete(paramsId);
-  //   } catch {
-  //     return err(new AppError('Erro ao tentar deletar.', 500)); // interno
-  //   }
+    if (!this.fileStorage.existsFolder([userId])) {
+      return err(new AppError('Pasta do usuário não encontrada.', 500)); // interno
+    }
 
-  //   return ok(undefined);
-  // }
+    if (this.fileStorage.existsFolder([userId, paramsId])) {
+      try {
+        this.fileStorage.deleteFolder([userId, paramsId]);
+      } catch (error) {
+        console.error('Falha ao deletar pasta do cliente:', error);
+        return err(new AppError('Erro ao tentar deletar arquivos do cliente.', 500));
+      }
+    }
+
+    try {
+      const deleted = await this.clientRepository.delete(paramsId);
+      return ok(deleted!);
+    } catch (error) {
+      console.error('Falha ao deletar cliente do DB:', error);
+      return err(new AppError('Erro ao tentar deletar.', 500));
+    }
+  }
 }

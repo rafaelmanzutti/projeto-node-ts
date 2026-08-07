@@ -2,6 +2,7 @@ import { prisma } from '../../../../shared/infra/database/prisma.js';
 import { IClientRepository } from '../../domain/IClientRepository.js';
 import { IClient } from '../../domain/Client.js';
 import { IUpdateClientDTO } from '../../application/dtos/IUpdateClientDTO.js';
+import { Prisma } from '../../../../prisma/generated/client.js';
 
 export class PrismaClientRepository implements IClientRepository {
   async create(client: IClient): Promise<IClient> {
@@ -49,59 +50,19 @@ export class PrismaClientRepository implements IClientRepository {
         data: { ...data },
       });
       return updated as unknown as IClient;
-    } catch (error: unknown) {
-      if (
-        typeof error === 'object' &&
-        error !== null &&
-        'code' in error &&
-        String((error as Record<string, unknown>).code) === 'P2025'
-      ) {
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
         return null;
       }
       throw error;
     }
   }
 
-  async delete(paramsId: string): Promise<IClient | null> {
+  async delete(paramsId: string): Promise<Pick<IClient, 'id' | 'name' | 'email'>> {
     const deleted = await prisma.userClient.delete({
-      where: {
-        id: paramsId,
-      },
+      where: { id: paramsId },
       select: { id: true, name: true, email: true },
     });
-    return deleted as unknown as IClient | null;
+    return deleted;
   }
-
-  // async findByEmail(email: string): Promise<IUser | null> {
-  //   const user = await prisma.user.findUnique({
-  //     where: { email },
-  //     select: { id: true, name: true, email: true },
-  //   });
-  //   return user as unknown as IUser | null;
-  // }
-
-  // async findById(id: string): Promise<IUser | null> {
-  //   const user = await prisma.user.findUnique({
-  //     where: { id },
-  //     select: { id: true, name: true, email: true },
-  //   });
-  //   return user as unknown as IUser | null;
-  // }
-
-  // async findByEmailWithPassword(email: string): Promise<IUser | null> {
-  //   const user = await prisma.user.findUnique({
-  //     where: { email },
-  //     select: { id: true, name: true, email: true, password: true },
-  //   });
-  //   return user as unknown as IUser | null;
-  // }
-
-  // async findByEmailWithResetSecret(email: string): Promise<IUser | null> {
-  //   const user = await prisma.user.findUnique({
-  //     where: { email },
-  //     omit: { password: true },
-  //     include: { resetPasswordSecret: true },
-  //   });
-  //   return user as unknown as IUser | null;
-  // }
 }

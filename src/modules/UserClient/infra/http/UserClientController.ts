@@ -192,43 +192,48 @@ class UserClientController {
     }
   }
 
-  // public async delete(req: Request, res: Response): Promise<Response> {
-  //   const paramsId = req.params.id as string;
+  public async delete(req: Request, res: Response): Promise<Response> {
+    const paramsId = req.params.id as string;
+    const userId = req.tokenUserId;
 
-  //   const validation = ZIdSchema.safeParse(paramsId);
-  //   if (!validation.success) {
-  //     return res.status(400).json({
-  //       message: 'Dados Inválidos.',
-  //       error: validation.error.issues,
-  //     });
-  //   }
+    if (!userId) return res.status(401).json({ message: 'Não autorizado.' });
 
-  //   const userRepository = new PrismaUserRepository();
-  //   const userService = new UserService(userRepository);
+    const validation = ZIdSchema.safeParse(paramsId);
+    if (!validation.success) {
+      return res.status(400).json({
+        message: 'Dados Inválidos.',
+        error: validation.error.issues,
+      });
+    }
 
-  //   try {
-  //     const result = await userService.delete(paramsId);
-  //     if (!result.ok) {
-  //       const { statusCode } = result.error as AppError;
+    const userRepository = new PrismaUserRepository();
+    const clientRepository = new PrismaClientRepository();
+    const fileStorage = new FileStorageRepository(['assets', 'files']);
+    const userClientService = new UserClientService(userRepository, clientRepository, fileStorage);
 
-  //       if (statusCode >= 500) {
-  //         logger.error({ userId: paramsId }, result.error.message); // só aparece no terminal do servidor
-  //       }
+    try {
+      const result = await userClientService.delete(paramsId, userId);
+      if (!result.ok) {
+        const { statusCode } = result.error as AppError;
 
-  //       const message =
-  //         statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
+        if (statusCode >= 500) {
+          logger.error({ userId: paramsId }, result.error.message);
+        }
 
-  //       return res.status(statusCode).json({ message });
-  //     }
+        const message =
+          statusCode >= 500 ? 'Erro interno. Contate o suporte.' : result.error.message;
 
-  //     return res.json({
-  //       message: 'Usuário deletado com sucesso!',
-  //     });
-  //   } catch (error) {
-  //     logger.error(error);
-  //     return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
-  //   }
-  // }
+        return res.status(statusCode).json({ message });
+      }
+
+      return res.json({
+        message: `Cliente ${result.value.name} deletado com sucesso!`,
+      });
+    } catch (error) {
+      logger.error(error);
+      return res.status(500).json({ message: 'Erro interno. Contate o suporte.' });
+    }
+  }
 }
 
 export const userClientController = new UserClientController();
