@@ -30,13 +30,26 @@ export class PrismaClientRepository implements IClientRepository {
     return client as unknown as IClient | null;
   }
 
-  async count(userId: string): Promise<number> {
-    return prisma.userClient.count({ where: { userId } });
+  async count(userId: string, search?: string): Promise<number> {
+    return prisma.userClient.count({
+      where: {
+        userId,
+        ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+      },
+    });
   }
 
-  async listByUserId(userId: string, skip: number, take: number): Promise<IClient[]> {
+  async listByUserId(
+    userId: string,
+    skip: number,
+    take: number,
+    search?: string,
+  ): Promise<IClient[]> {
     return prisma.userClient.findMany({
-      where: { userId },
+      where: {
+        userId,
+        ...(search ? { name: { contains: search, mode: 'insensitive' } } : {}),
+      },
       skip,
       take,
       orderBy: { createdAt: 'desc' },

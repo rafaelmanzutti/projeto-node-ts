@@ -61,14 +61,18 @@ export class UserClientService {
     }
   }
 
-  public async listAll(userId: string, page: number): Promise<Result<IClientsPageDTO>> {
+  public async listAll(
+    userId: string,
+    page: number,
+    search: string | undefined,
+  ): Promise<Result<IClientsPageDTO>> {
     const pageSize = 11;
     const skip = (page - 1) * pageSize;
 
     try {
       const [totalCount, clients] = await Promise.all([
-        this.clientRepository.count(userId),
-        this.clientRepository.listByUserId(userId, skip, pageSize),
+        this.clientRepository.count(userId, search),
+        this.clientRepository.listByUserId(userId, skip, pageSize, search),
       ]);
 
       if (totalCount === 0) {

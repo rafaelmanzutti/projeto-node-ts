@@ -107,6 +107,7 @@ class UserClientController {
   public async listAll(req: Request, res: Response): Promise<Response> {
     const userId = req.tokenUserId;
     let page = Number(req.query.page);
+    const search = req.query.search ? String(req.query.search) : undefined;
 
     if (!page || page <= 0 || isNaN(page)) {
       page = 1;
@@ -126,7 +127,7 @@ class UserClientController {
     const userClientService = new UserClientService(userRepository, clientRepository, fileStorage);
 
     try {
-      const result = await userClientService.listAll(userId, page);
+      const result = await userClientService.listAll(userId, page, search);
       if (!result.ok) {
         const statusCode = (result.error as AppError)?.statusCode ?? 500;
         if (statusCode >= 500) logger.error(result.error);
